@@ -92,13 +92,14 @@
   .slot.has .count{color:var(--accent)}
   .slot .people{font-size:.95rem;color:var(--ink);margin:.25rem 0 0}
   .slot .people .empty{color:var(--faint);font-style:italic}
-  .slot .join{
-    margin-top:.5rem;
+  .slot .actions{display:flex;gap:1.3rem;align-items:baseline;margin-top:.5rem}
+  .slot .join,.slot .leave{
     font-family:var(--label);font-size:12px;font-weight:500;
-    background:none;border:none;color:var(--accent);cursor:pointer;
-    padding:0;border-bottom:1px solid var(--accent);line-height:1.4;
+    background:none;border:none;cursor:pointer;padding:0;line-height:1.4;
   }
-  .slot .join:hover{opacity:.6}
+  .slot .join{color:var(--accent);border-bottom:1px solid var(--accent)}
+  .slot .leave{color:var(--grey);border-bottom:1px solid var(--line)}
+  .slot .join:hover,.slot .leave:hover{opacity:.6}
 
   .form{margin-top:.7rem;display:none;flex-direction:column;gap:.5rem;max-width:340px}
   .form.open{display:flex}
@@ -176,14 +177,18 @@ const I18N = {
     nadie:"Sin cubrir — sumate",
     personas:(n)=>n===1?"1 persona":`${n} personas`,
     sumarme:"Sumarme a este turno",
+    borrarme:"Borrarme",
     nombre:"Nombre",
     email:"Email",
     confirmar:"Confirmar",
+    confirmarBaja:"Borrarme",
     cancelar:"cancelar",
     enviando:"Enviando…",
     cargando:"Cargando turnos…",
     errCargar:"No se pudieron cargar los turnos. Revisá la conexión.",
     errEnviar:"No se pudo registrar. Intentá de nuevo.",
+    errBorrar:"No se pudo borrar. Intentá de nuevo.",
+    bajaSinMatch:"No encontramos una inscripción con ese email en este turno.",
     demo:"Modo demo — configurá CONFIG.endpoint con tu URL de Apps Script para activar las inscripciones reales.",
     nota:"Los datos quedan registrados de forma privada. El email solo se usa para recordatorios y nunca aparece en este tablero público.",
     htmlLang:"es"
@@ -203,14 +208,18 @@ const I18N = {
     nadie:"Uncovered — join in",
     personas:(n)=>n===1?"1 person":`${n} people`,
     sumarme:"Join this slot",
+    borrarme:"Remove me",
     nombre:"Name",
     email:"Email",
     confirmar:"Confirm",
+    confirmarBaja:"Remove me",
     cancelar:"cancel",
     enviando:"Sending…",
     cargando:"Loading slots…",
     errCargar:"Could not load the slots. Check your connection.",
     errEnviar:"Could not register. Please try again.",
+    errBorrar:"Could not remove. Please try again.",
+    bajaSinMatch:"No sign-up found with that email for this slot.",
     demo:"Demo mode — set CONFIG.endpoint to your Apps Script URL to enable real sign-ups.",
     nota:"Your details are stored privately. Email is only used for reminders and never shown on this public board.",
     htmlLang:"en"
@@ -362,22 +371,41 @@ function render(){
         <span class="count">${gente.length?T.personas(gente.length):""}</span>
       </div>
       ${personas}
-      <button class="join">${T.sumarme}</button>
-      <form class="form" data-franja="${franja}">
+      <div class="actions">
+        <button class="join">${T.sumarme}</button>
+        ${gente.length?`<button class="leave">${T.borrarme}</button>`:""}
+      </div>
+      <form class="form alta" data-franja="${franja}">
         <div class="row"><label>${T.nombre}</label><input name="nombre" required maxlength="60" placeholder="${T.nombre}"></div>
         <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
         <button type="submit">${T.confirmar}</button>
         <button type="button" class="cancel">${T.cancelar}</button>
-      </form>`;
+      </form>
+      ${gente.length?`<form class="form baja" data-franja="${franja}">
+        <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
+        <button type="submit">${T.confirmarBaja}</button>
+        <button type="button" class="cancel">${T.cancelar}</button>
+      </form>`:""}`;
 
-    const form = slot.querySelector("form");
+    const formAlta = slot.querySelector("form.alta");
     slot.querySelector(".join").addEventListener("click",()=>{
-      const open = form.classList.contains("open");
+      const open = formAlta.classList.contains("open");
       document.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
-      if(!open){ form.classList.add("open"); form.querySelector("input").focus(); }
+      if(!open){ formAlta.classList.add("open"); formAlta.querySelector("input").focus(); }
     });
-    slot.querySelector(".cancel").addEventListener("click",()=>form.classList.remove("open"));
-    form.addEventListener("submit",ev=>enviar(ev,form,dia.key));
+    formAlta.querySelector(".cancel").addEventListener("click",()=>formAlta.classList.remove("open"));
+    formAlta.addEventListener("submit",ev=>enviar(ev,formAlta,dia.key));
+
+    const formBaja = slot.querySelector("form.baja");
+    if(formBaja){
+      slot.querySelector(".leave").addEventListener("click",()=>{
+        const open = formBaja.classList.contains("open");
+        document.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
+        if(!open){ formBaja.classList.add("open"); formBaja.querySelector("input").focus(); }
+      });
+      formBaja.querySelector(".cancel").addEventListener("click",()=>formBaja.classList.remove("open"));
+      formBaja.addEventListener("submit",ev=>borrar(ev,formBaja,dia.key));
+    }
 
     board.appendChild(slot);
   });
@@ -412,6 +440,35 @@ async function enviar(ev,form,fecha){
   }catch(e){
     btn.disabled=false; btn.textContent=t().confirmar;
     alert(t().errEnviar);
+  }
+}
+
+async function borrar(ev,form,fecha){
+  ev.preventDefault();
+  const btn = form.querySelector("button[type=submit]");
+  const email = form.email.value.trim();
+  if(!email) return;
+  btn.disabled=true; btn.textContent=t().enviando;
+
+  if(!CONFIG.endpoint){
+    // demo: no hay emails en los datos de ejemplo, sólo cerramos el formulario
+    form.classList.remove("open"); btn.disabled=false; btn.textContent=t().confirmarBaja; return;
+  }
+  try{
+    const params = new URLSearchParams();
+    params.append("accion","baja");
+    params.append("fecha", fecha);
+    params.append("franja", form.dataset.franja);
+    params.append("email", email);
+    const r = await fetch(CONFIG.endpoint,{ method:"POST", body:params });
+    let j = null; try{ j = await r.json(); }catch(_){}
+    if(j === null){ await cargar(); return; }          // no se pudo leer: refrescamos igual
+    if(j.ok && j.borradas > 0){ await cargar(); return; } // baja efectiva: re-render desde el servidor
+    btn.disabled=false; btn.textContent=t().confirmarBaja;
+    alert(t().bajaSinMatch);
+  }catch(e){
+    btn.disabled=false; btn.textContent=t().confirmarBaja;
+    alert(t().errBorrar);
   }
 }
 
