@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oración por la Paz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Archivo:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#faf8f3;
+    --ink:#1c1b18;
+    --grey:#6f6d66;
+    --faint:#a6a39a;
+    --line:#e2ded3;
+    --accent:#2f3e63;
+    --display:'Fraunces',Georgia,serif;
+    --body:'Newsreader',Georgia,serif;
+    --label:'Archivo',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:var(--body);font-size:18px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(1.5rem,5vw,4rem) clamp(1rem,5vw,2rem);
+  }
+  .wrap{max-width:980px;margin:0 auto}
+
+  /* ---- encabezado + selector de idioma ---- */
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+  .kicker{
+    font-family:var(--label);font-size:12px;font-weight:500;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:.6rem;
+  }
+  .lang{display:flex;gap:.1rem;font-family:var(--label);font-size:12px;flex-shrink:0}
+  .lang button{
+    background:none;border:1px solid var(--line);color:var(--grey);
+    font-family:var(--label);font-size:11px;font-weight:500;letter-spacing:.08em;
+    padding:.3rem .55rem;cursor:pointer;
+  }
+  .lang button.active{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+
+  h1{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(2.6rem,7vw,4.4rem);line-height:1.02;
+    letter-spacing:-.01em;margin-bottom:1.1rem;
+  }
+  .lede{font-size:1.05rem;color:var(--grey);max-width:48ch}
+  .rule{height:1px;background:var(--line);margin:2rem 0}
+
+  .banner{
+    font-family:var(--label);font-size:12px;letter-spacing:.02em;
+    background:#fff;border:1px dashed var(--accent);color:var(--accent);
+    padding:.6rem .8rem;margin-bottom:1.6rem;
+  }
+
+  .meta{
+    display:flex;justify-content:space-between;align-items:baseline;
+    flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:1.4rem;
+  }
+  .meta .week{font-family:var(--display);font-size:1.5rem}
+  .meta .cover{font-family:var(--label);font-size:13px;color:var(--grey);letter-spacing:.02em}
+
+  /* ---- pestañas por día ---- */
+  .tabs{
+    display:flex;flex-wrap:wrap;gap:1px;background:var(--line);
+    border:1px solid var(--line);margin-bottom:1.4rem;
+  }
+  .tab{
+    flex:1 1 auto;min-width:84px;background:var(--paper);
+    font-family:var(--label);font-size:12px;font-weight:500;letter-spacing:.04em;
+    color:var(--grey);border:none;cursor:pointer;
+    padding:.7rem .4rem;display:flex;flex-direction:column;align-items:center;gap:.25rem;
+  }
+  .tab .tnum{font-family:var(--display);font-size:1.15rem;color:var(--ink);line-height:1}
+  .tab .tcov{font-size:10px;letter-spacing:.06em;color:var(--faint)}
+  .tab.active{background:var(--accent);color:var(--paper)}
+  .tab.active .tnum,.tab.active .tcov{color:var(--paper)}
+
+  /* ---- lista de franjas ---- */
+  .slots{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .slot{background:var(--paper);padding:.85rem 1rem}
+  .slot .head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+  .slot .time{font-family:var(--display);font-size:1.1rem;color:var(--accent);white-space:nowrap}
+  .slot .count{
+    font-family:var(--label);font-size:10px;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint);
+  }
+  .slot.has .count{color:var(--accent)}
+  .slot .people{font-size:.95rem;color:var(--ink);margin:.25rem 0 0}
+  .slot .people .empty{color:var(--faint);font-style:italic}
+  .slot .join{
+    margin-top:.5rem;
+    font-family:var(--label);font-size:12px;font-weight:500;
+    background:none;border:none;color:var(--accent);cursor:pointer;
+    padding:0;border-bottom:1px solid var(--accent);line-height:1.4;
+  }
+  .slot .join:hover{opacity:.6}
+
+  .form{margin-top:.7rem;display:none;flex-direction:column;gap:.5rem;max-width:340px}
+  .form.open{display:flex}
+  .form label{font-family:var(--label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+  .form input{
+    font-family:var(--body);font-size:.95rem;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:0;
+    padding:.5rem .6rem;width:100%;
+  }
+  .form input:focus{outline:none;border-color:var(--accent)}
+  .form .row{display:flex;flex-direction:column;gap:.2rem}
+  .form button[type=submit]{
+    font-family:var(--label);font-size:13px;font-weight:500;letter-spacing:.04em;
+    background:var(--accent);color:var(--paper);border:none;
+    padding:.55rem .9rem;cursor:pointer;align-self:flex-start;margin-top:.2rem;
+  }
+  .form button[type=submit]:disabled{opacity:.5;cursor:default}
+  .form .cancel{font-family:var(--label);font-size:12px;color:var(--grey);background:none;border:none;cursor:pointer;text-decoration:underline;align-self:flex-start}
+
+  .note{font-family:var(--label);font-size:12px;color:var(--grey);margin-top:2.2rem;line-height:1.7;max-width:60ch}
+  .state{font-family:var(--label);font-size:13px;color:var(--grey);padding:2rem 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="kicker" id="kicker">Cadena de oración</div>
+    <div class="lang" id="lang">
+      <button data-l="es">ES</button>
+      <button data-l="en">EN</button>
+    </div>
+  </div>
+  <h1 id="title">Oración por la Paz</h1>
+  <p class="lede" id="lede"></p>
+  <div class="rule"></div>
+
+  <div id="banner" class="banner" style="display:none"></div>
+
+  <div class="meta">
+    <div class="week" id="week">—</div>
+    <div class="cover" id="cover"></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="board" class="state">Cargando…</div>
+
+  <p class="note" id="note"></p>
+</div>
+
+<script>
+/* ====== CONFIGURACIÓN ======
+   Pegá acá la URL del despliegue de Apps Script (termina en /exec).
+   Si lo dejás vacío, la página corre en MODO DEMO con datos de ejemplo. */
+const CONFIG = {
+  endpoint: "https://script.google.com/macros/s/AKfycbwrRe_AoI64ZEbtZksLLWYRpApeedhFEo3lOCIisywr3Ir-p5zvIEWw9FUYL6DBsBQY/exec"
+};
+
+const TZ = "America/Argentina/Mendoza";
+const TOTAL_FRANJAS = 252; // 7 días × 36
+
+/* ====== TEXTOS (i18n) ====== */
+const I18N = {
+  es:{
+    kicker:"Cadena de oración",
+    title:"Oración por la Paz",
+    lede:"Oración perpetua, 24 horas. Cada día se divide en 36 turnos de 40 minutos. Elegí uno o más turnos y cubrilos para que la oración nunca se corte. Pueden anotarse varias personas en el mismo turno.",
+    dias:["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
+    diasCorto:["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"],
+    meses:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
+    semanaDel:"Semana del",
+    al:"al",
+    de:"de",
+    cobertura:(n)=>`${n} de ${TOTAL_FRANJAS} turnos cubiertos`,
+    cobDia:(n)=>`${n}/36`,
+    nadie:"Sin cubrir — sumate",
+    personas:(n)=>n===1?"1 persona":`${n} personas`,
+    sumarme:"Sumarme a este turno",
+    nombre:"Nombre",
+    email:"Email",
+    confirmar:"Confirmar",
+    cancelar:"cancelar",
+    enviando:"Enviando…",
+    cargando:"Cargando turnos…",
+    errCargar:"No se pudieron cargar los turnos. Revisá la conexión.",
+    errEnviar:"No se pudo registrar. Intentá de nuevo.",
+    demo:"Modo demo — configurá CONFIG.endpoint con tu URL de Apps Script para activar las inscripciones reales.",
+    nota:"Los datos quedan registrados de forma privada. El email solo se usa para recordatorios y nunca aparece en este tablero público.",
+    htmlLang:"es"
+  },
+  en:{
+    kicker:"Prayer chain",
+    title:"Prayer for Peace",
+    lede:"Perpetual prayer, 24 hours a day. Each day is split into 36 slots of 40 minutes. Choose one or more slots and cover them so prayer never stops. Several people can sign up for the same slot.",
+    dias:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    diasCorto:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    meses:["January","February","March","April","May","June","July","August","September","October","November","December"],
+    semanaDel:"Week of",
+    al:"to",
+    de:"",
+    cobertura:(n)=>`${n} of ${TOTAL_FRANJAS} slots covered`,
+    cobDia:(n)=>`${n}/36`,
+    nadie:"Uncovered — join in",
+    personas:(n)=>n===1?"1 person":`${n} people`,
+    sumarme:"Join this slot",
+    nombre:"Name",
+    email:"Email",
+    confirmar:"Confirm",
+    cancelar:"cancel",
+    enviando:"Sending…",
+    cargando:"Loading slots…",
+    errCargar:"Could not load the slots. Check your connection.",
+    errEnviar:"Could not register. Please try again.",
+    demo:"Demo mode — set CONFIG.endpoint to your Apps Script URL to enable real sign-ups.",
+    nota:"Your details are stored privately. Email is only used for reminders and never shown on this public board.",
+    htmlLang:"en"
+  }
+};
+
+/* idioma inicial: lo guardado, o el del navegador, o español */
+let LANG = localStorage.getItem("lang")
+  || (navigator.language && navigator.language.toLowerCase().startsWith("en") ? "en" : "es");
+let DIA_SEL = 0;            // índice de día seleccionado (0 = lunes)
+let INSCRIPCIONES = [];     // [{fecha, franja, nombre}]
+
+const t = () => I18N[LANG];
+
+/* ---- fecha de hoy en zona horaria de Mendoza ---- */
+function hoyEnTZ(){
+  const f = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"});
+  const [y,m,d] = f.format(new Date()).split("-").map(Number);
+  return new Date(Date.UTC(y,m-1,d,12,0,0)); // mediodía UTC para evitar desfases
+}
+function lunesDeLaSemana(){
+  const x = hoyEnTZ();
+  const dow = (x.getUTCDay()+6)%7; // 0 = lunes
+  x.setUTCDate(x.getUTCDate()-dow);
+  return x;
+}
+function claveFecha(d){ return d.toISOString().slice(0,10); }
+
+function diasDeLaSemana(){
+  const base = lunesDeLaSemana();
+  return Array.from({length:7},(_,i)=>{
+    const d = new Date(base); d.setUTCDate(base.getUTCDate()+i);
+    return { key:claveFecha(d), num:d.getUTCDate(), mes:parseInt(d.toISOString().slice(5,7))-1 };
+  });
+}
+
+/* ---- las 36 franjas de un día: "00:00","00:40",... "23:20" ---- */
+function franjasDelDia(){
+  return Array.from({length:36},(_,i)=>{
+    const mins=i*40;
+    return `${String(Math.floor(mins/60)).padStart(2,"0")}:${String(mins%60).padStart(2,"0")}`;
+  });
+}
+function finFranja(inicio){
+  const [h,m]=inicio.split(":").map(Number);
+  let mt=(h*60+m+40)%1440;
+  return `${String(Math.floor(mt/60)).padStart(2,"0")}:${String(mt%60).padStart(2,"0")}`;
+}
+
+function rangoTexto(dias){
+  const T=t(), a=dias[0], b=dias[6];
+  const ma=T.meses[a.mes], mb=T.meses[b.mes];
+  if(LANG==="en"){
+    return ma===mb ? `${ma} ${a.num}–${b.num}` : `${ma} ${a.num} ${T.al} ${mb} ${b.num}`;
+  }
+  return ma===mb ? `${a.num} ${T.al} ${b.num} ${T.de} ${ma}` : `${a.num} ${T.de} ${ma} ${T.al} ${b.num} ${T.de} ${mb}`;
+}
+
+/* ---- datos de ejemplo (modo demo) ---- */
+function demoData(){
+  const d = diasDeLaSemana();
+  return [
+    {fecha:d[0].key,franja:"00:00",nombre:"María L."},
+    {fecha:d[0].key,franja:"00:00",nombre:"Diego R."},
+    {fecha:d[0].key,franja:"06:00",nombre:"Ana M."},
+    {fecha:d[1].key,franja:"21:20",nombre:"Lucía F."},
+    {fecha:d[3].key,franja:"12:00",nombre:"Pedro G."},
+    {fecha:d[6].key,franja:"23:20",nombre:"Clara V."},
+  ];
+}
+
+async function cargar(){
+  if(!CONFIG.endpoint){
+    const b=document.getElementById("banner");
+    b.style.display="block"; b.textContent=t().demo;
+    INSCRIPCIONES = demoData();
+    render(); return;
+  }
+  try{
+    const r = await fetch(CONFIG.endpoint,{method:"GET"});
+    const j = await r.json();
+    INSCRIPCIONES = (j.inscripciones||[]);
+    render();
+  }catch(e){
+    document.getElementById("board").className="state";
+    document.getElementById("board").textContent = t().errCargar;
+  }
+}
+
+/* ---- pinta los textos fijos según idioma ---- */
+function pintarChrome(){
+  const T=t();
+  document.documentElement.lang = T.htmlLang;
+  document.getElementById("kicker").textContent = T.kicker;
+  document.getElementById("title").textContent = T.title;
+  document.getElementById("lede").textContent = T.lede;
+  document.getElementById("note").textContent = T.nota;
+  document.title = T.title;
+  document.querySelectorAll("#lang button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.l===LANG);
+  });
+}
+
+function render(){
+  pintarChrome();
+  const T=t();
+  const dias = diasDeLaSemana();
+  const clavesSemana = new Set(dias.map(d=>d.key));
+
+  // contador global de cobertura (franjas con al menos 1 persona, en esta semana)
+  const cubiertas = new Set(
+    INSCRIPCIONES.filter(i=>clavesSemana.has(i.fecha)).map(i=>i.fecha+"|"+i.franja)
+  );
+  document.getElementById("week").textContent = `${T.semanaDel} ${rangoTexto(dias)}`;
+  document.getElementById("cover").textContent = T.cobertura(cubiertas.size);
+
+  // pestañas por día
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  dias.forEach((d,i)=>{
+    const cubDia = new Set(
+      INSCRIPCIONES.filter(x=>x.fecha===d.key).map(x=>x.franja)
+    ).size;
+    const btn = document.createElement("button");
+    btn.className = "tab"+(i===DIA_SEL?" active":"");
+    btn.innerHTML = `<span>${T.diasCorto[i]}</span><span class="tnum">${d.num}</span><span class="tcov">${T.cobDia(cubDia)}</span>`;
+    btn.addEventListener("click",()=>{ DIA_SEL=i; render(); });
+    tabs.appendChild(btn);
+  });
+
+  // franjas del día seleccionado
+  const dia = dias[DIA_SEL];
+  const board = document.getElementById("board");
+  board.className = "slots";
+  board.innerHTML = "";
+
+  franjasDelDia().forEach(franja=>{
+    const gente = INSCRIPCIONES.filter(i=>i.fecha===dia.key && i.franja===franja);
+    const slot = document.createElement("div");
+    slot.className = "slot"+(gente.length?" has":"");
+
+    const personas = gente.length
+      ? `<div class="people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}</div>`
+      : `<div class="people"><span class="empty">${T.nadie}</span></div>`;
+
+    slot.innerHTML = `
+      <div class="head">
+        <span class="time">${franja}–${finFranja(franja)}</span>
+        <span class="count">${gente.length?T.personas(gente.length):""}</span>
+      </div>
+      ${personas}
+      <button class="join">${T.sumarme}</button>
+      <form class="form" data-franja="${franja}">
+        <div class="row"><label>${T.nombre}</label><input name="nombre" required maxlength="60" placeholder="${T.nombre}"></div>
+        <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
+        <button type="submit">${T.confirmar}</button>
+        <button type="button" class="cancel">${T.cancelar}</button>
+      </form>`;
+
+    const form = slot.querySelector("form");
+    slot.querySelector(".join").addEventListener("click",()=>{
+      const open = form.classList.contains("open");
+      document.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
+      if(!open){ form.classList.add("open"); form.querySelector("input").focus(); }
+    });
+    slot.querySelector(".cancel").addEventListener("click",()=>form.classList.remove("open"));
+    form.addEventListener("submit",ev=>enviar(ev,form,dia.key));
+
+    board.appendChild(slot);
+  });
+}
+
+async function enviar(ev,form,fecha){
+  ev.preventDefault();
+  const btn = form.querySelector("button[type=submit]");
+  const datos = {
+    fecha,
+    franja: form.dataset.franja,
+    nombre: form.nombre.value.trim(),
+    email: form.email.value.trim()
+  };
+  if(!datos.nombre || !datos.email) return;
+  btn.disabled=true; btn.textContent=t().enviando;
+
+  if(!CONFIG.endpoint){
+    INSCRIPCIONES.push({fecha:datos.fecha,franja:datos.franja,nombre:datos.nombre});
+    render(); return;
+  }
+  try{
+    const params = new URLSearchParams();
+    params.append("fecha", datos.fecha);
+    params.append("franja", datos.franja);
+    params.append("nombre", datos.nombre);
+    params.append("email", datos.email);
+    params.append("lang", LANG);
+    await fetch(CONFIG.endpoint,{ method:"POST", body:params });
+    INSCRIPCIONES.push({fecha:datos.fecha,franja:datos.franja,nombre:datos.nombre}); // optimista
+    render();
+  }catch(e){
+    btn.disabled=false; btn.textContent=t().confirmar;
+    alert(t().errEnviar);
+  }
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+/* ---- selector de idioma ---- */
+document.getElementById("lang").addEventListener("click",e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  LANG = b.dataset.l; localStorage.setItem("lang",LANG); render();
+});
+
+/* arranque: día de hoy seleccionado por defecto */
+DIA_SEL = (hoyEnTZ().getUTCDay()+6)%7;
+cargar();
+</script>
+</body>
+</html>
