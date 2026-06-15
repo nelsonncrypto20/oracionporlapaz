@@ -57,12 +57,49 @@
     padding:.6rem .8rem;margin-bottom:1.6rem;
   }
 
+  .confirm{
+    display:flex;align-items:center;flex-wrap:wrap;gap:.7rem 1rem;
+    background:#fff;border:1px solid var(--accent);
+    padding:.8rem 1rem;margin-bottom:1.6rem;
+  }
+  .confirm .ctxt{font-size:.95rem;color:var(--ink);flex:1 1 16rem}
+  .confirm .addcal{
+    font-family:var(--label);font-size:13px;font-weight:500;letter-spacing:.04em;
+    background:var(--accent);color:var(--paper);border:none;
+    padding:.5rem .9rem;cursor:pointer;flex-shrink:0;
+  }
+  .confirm .addcal:hover{opacity:.85}
+  .confirm .cclose{
+    font-family:var(--label);font-size:12px;color:var(--grey);
+    background:none;border:none;cursor:pointer;text-decoration:underline;
+  }
+
   .meta{
     display:flex;justify-content:space-between;align-items:baseline;
     flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:1.4rem;
   }
   .meta .week{font-family:var(--display);font-size:1.5rem}
   .meta .cover{font-family:var(--label);font-size:13px;color:var(--grey);letter-spacing:.02em}
+
+  /* ---- selector de zona horaria ---- */
+  .tzrow{
+    display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .7rem;
+    margin-bottom:1.4rem;
+  }
+  .tzrow label{
+    font-family:var(--label);font-size:11px;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--grey);
+  }
+  .tzrow select{
+    font-family:var(--label);font-size:13px;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:0;
+    padding:.4rem .6rem;cursor:pointer;
+  }
+  .tzrow select:focus{outline:none;border-color:var(--accent)}
+  .tzrow .tznote{
+    font-family:var(--label);font-size:11px;color:var(--faint);
+    flex:1 1 14rem;line-height:1.5;
+  }
 
   /* ---- pestañas por día ---- */
   .tabs{
@@ -85,6 +122,13 @@
   .slot{background:var(--paper);padding:.85rem 1rem}
   .slot .head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
   .slot .time{font-family:var(--display);font-size:1.1rem;color:var(--accent);white-space:nowrap}
+  .slot .ref{font-family:var(--label);font-size:10px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+  .slot .local{
+    font-family:var(--label);font-size:12px;color:var(--grey);
+    margin-top:.15rem;display:flex;align-items:baseline;gap:.45rem;
+  }
+  .slot .local .lt{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .slot .local .lh{font-family:var(--display);color:var(--ink)}
   .slot .count{
     font-family:var(--label);font-size:10px;font-weight:500;letter-spacing:.12em;
     text-transform:uppercase;color:var(--faint);
@@ -137,10 +181,17 @@
   <div class="rule"></div>
 
   <div id="banner" class="banner" style="display:none"></div>
+  <div id="confirm" class="confirm" style="display:none"></div>
 
   <div class="meta">
     <div class="week" id="week">—</div>
     <div class="cover" id="cover"></div>
+  </div>
+
+  <div class="tzrow">
+    <label for="tz" id="tzlabel">Tu zona horaria</label>
+    <select id="tz"></select>
+    <span class="tznote" id="tznote"></span>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -157,8 +208,47 @@ const CONFIG = {
   endpoint: "https://script.google.com/macros/s/AKfycbwrRe_AoI64ZEbtZksLLWYRpApeedhFEo3lOCIisywr3Ir-p5zvIEWw9FUYL6DBsBQY/exec"
 };
 
-const TZ = "America/Argentina/Mendoza";
+/* TZ_REF: zona de referencia. Es el ANCLA del calendario: los 252 turnos y
+   los días del tablero se definen en hora de Mendoza y son los mismos para
+   todo el mundo (la cadena es una sola, en tiempo absoluto). Mendoza no tiene
+   horario de verano → offset fijo -03:00. */
+const TZ_REF = "America/Argentina/Mendoza";
+const TZ_REF_OFFSET = "-03:00";
 const TOTAL_FRANJAS = 252; // 7 días × 36
+
+/* Zonas horarias para mostrar la hora LOCAL de cada turno. La selección no
+   cambia el calendario, sólo la conversión que ve el usuario. La conversión
+   parte del instante absoluto, así Europa con horario de verano sale bien. */
+const TIMEZONES = [
+  {g:"latam", id:"America/Argentina/Mendoza",     es:"Argentina (Mendoza)",        en:"Argentina (Mendoza)"},
+  {g:"latam", id:"America/Argentina/Buenos_Aires",es:"Argentina (Buenos Aires)",   en:"Argentina (Buenos Aires)"},
+  {g:"latam", id:"America/Santiago",              es:"Chile",                      en:"Chile"},
+  {g:"latam", id:"America/Montevideo",            es:"Uruguay",                    en:"Uruguay"},
+  {g:"latam", id:"America/Asuncion",              es:"Paraguay",                   en:"Paraguay"},
+  {g:"latam", id:"America/La_Paz",                es:"Bolivia",                    en:"Bolivia"},
+  {g:"latam", id:"America/Sao_Paulo",             es:"Brasil",                     en:"Brazil"},
+  {g:"latam", id:"America/Lima",                  es:"Perú",                       en:"Peru"},
+  {g:"latam", id:"America/Bogota",                es:"Colombia",                   en:"Colombia"},
+  {g:"latam", id:"America/Guayaquil",             es:"Ecuador",                    en:"Ecuador"},
+  {g:"latam", id:"America/Caracas",               es:"Venezuela",                  en:"Venezuela"},
+  {g:"latam", id:"America/Mexico_City",           es:"México",                     en:"Mexico"},
+  {g:"latam", id:"America/Guatemala",             es:"Guatemala / Centroamérica",  en:"Guatemala / Central America"},
+  {g:"latam", id:"America/Santo_Domingo",         es:"Rep. Dominicana",            en:"Dominican Rep."},
+  {g:"eu",    id:"Europe/Madrid",                 es:"España",                     en:"Spain"},
+  {g:"eu",    id:"Europe/Lisbon",                 es:"Portugal",                   en:"Portugal"},
+  {g:"eu",    id:"Europe/Rome",                   es:"Italia",                     en:"Italy"},
+  {g:"eu",    id:"Europe/Paris",                  es:"Francia",                    en:"France"},
+];
+const TZ_IDS = new Set(TIMEZONES.map(z=>z.id));
+
+/* Zona elegida para ver la hora local: lo guardado, o la del navegador si
+   está en la lista, o la de referencia. */
+let TZ_USER = localStorage.getItem("tz");
+if(!TZ_IDS.has(TZ_USER)){
+  let nav = "";
+  try{ nav = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; }catch(_){}
+  TZ_USER = TZ_IDS.has(nav) ? nav : TZ_REF;
+}
 
 /* ====== TEXTOS (i18n) ====== */
 const I18N = {
@@ -191,6 +281,17 @@ const I18N = {
     bajaSinMatch:"No encontramos una inscripción con ese email en este turno.",
     demo:"Modo demo — configurá CONFIG.endpoint con tu URL de Apps Script para activar las inscripciones reales.",
     nota:"Los datos quedan registrados de forma privada. El email solo se usa para recordatorios y nunca aparece en este tablero público.",
+    tzLabel:"Tu zona horaria",
+    tzGrupos:{latam:"Latinoamérica", eu:"Europa"},
+    refCiudad:"Mendoza (ref.)",
+    tuHora:"tu hora",
+    tzNota:"Los turnos están anclados a la hora de Mendoza (referencia común). Elegí tu zona para ver a qué hora local te toca.",
+    confirmTexto:(f,h)=>`Listo, te sumaste al turno del ${f} a las ${h} (hora de Mendoza). Agregalo a tu calendario para no olvidarte.`,
+    addCal:"Agregar a mi calendario",
+    cerrar:"cerrar",
+    evtTitulo:"Oración por la Paz — mi turno",
+    evtDesc:"Turno de 40 minutos en la cadena de oración perpetua por la paz.",
+    evtAlarma:"Tu turno de oración empieza pronto",
     htmlLang:"es"
   },
   en:{
@@ -222,6 +323,17 @@ const I18N = {
     bajaSinMatch:"No sign-up found with that email for this slot.",
     demo:"Demo mode — set CONFIG.endpoint to your Apps Script URL to enable real sign-ups.",
     nota:"Your details are stored privately. Email is only used for reminders and never shown on this public board.",
+    tzLabel:"Your time zone",
+    tzGrupos:{latam:"Latin America", eu:"Europe"},
+    refCiudad:"Mendoza (ref.)",
+    tuHora:"your time",
+    tzNota:"Slots are anchored to Mendoza time (shared reference). Pick your zone to see your local time for each slot.",
+    confirmTexto:(f,h)=>`Done — you joined the ${f} slot at ${h} (Mendoza time). Add it to your calendar so you don't forget.`,
+    addCal:"Add to my calendar",
+    cerrar:"close",
+    evtTitulo:"Prayer for Peace — my slot",
+    evtDesc:"40-minute slot in the perpetual prayer chain for peace.",
+    evtAlarma:"Your prayer slot starts soon",
     htmlLang:"en"
   }
 };
@@ -236,7 +348,7 @@ const t = () => I18N[LANG];
 
 /* ---- fecha de hoy en zona horaria de Mendoza ---- */
 function hoyEnTZ(){
-  const f = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"});
+  const f = new Intl.DateTimeFormat("en-CA",{timeZone:TZ_REF,year:"numeric",month:"2-digit",day:"2-digit"});
   const [y,m,d] = f.format(new Date()).split("-").map(Number);
   return new Date(Date.UTC(y,m-1,d,12,0,0)); // mediodía UTC para evitar desfases
 }
@@ -267,6 +379,31 @@ function finFranja(inicio){
   const [h,m]=inicio.split(":").map(Number);
   let mt=(h*60+m+40)%1440;
   return `${String(Math.floor(mt/60)).padStart(2,"0")}:${String(mt%60).padStart(2,"0")}`;
+}
+
+/* ---- conversión de un turno a la hora local de TZ_USER ----
+   Parte del instante absoluto (fecha+franja en Mendoza, offset fijo -03:00)
+   y lo formatea en la zona elegida. Devuelve el rango "HH:mm–HH:mm" y, si en
+   esa zona el turno cae en otro día, el nombre corto del día como prefijo. */
+function partesEnTZ(inst, tz){
+  const p = new Intl.DateTimeFormat("en-GB",{
+    timeZone:tz, hourCycle:"h23",
+    hour:"2-digit", minute:"2-digit",
+    year:"numeric", month:"2-digit", day:"2-digit"
+  }).formatToParts(inst);
+  const g = type => (p.find(x=>x.type===type)||{}).value;
+  return { hh:g("hour"), mm:g("minute"), key:`${g("year")}-${g("month")}-${g("day")}` };
+}
+function rangoLocal(fecha, franja, tz){
+  const ini = new Date(`${fecha}T${franja}:00${TZ_REF_OFFSET}`);
+  const fin = new Date(ini.getTime() + 40*60000);
+  const s = partesEnTZ(ini, tz), e = partesEnTZ(fin, tz);
+  let pref = "";
+  if(s.key !== fecha){
+    const wd = new Date(s.key+"T12:00:00Z").getUTCDay(); // 0=domingo
+    pref = t().diasCorto[(wd+6)%7] + " ";
+  }
+  return `${pref}${s.hh}:${s.mm}–${e.hh}:${e.mm}`;
 }
 
 function rangoTexto(dias){
@@ -321,6 +458,28 @@ function pintarChrome(){
   document.querySelectorAll("#lang button").forEach(b=>{
     b.classList.toggle("active", b.dataset.l===LANG);
   });
+  pintarTZ();
+}
+
+/* ---- selector de zona horaria: opciones agrupadas + textos i18n ---- */
+function pintarTZ(){
+  const T=t();
+  document.getElementById("tzlabel").textContent = T.tzLabel;
+  document.getElementById("tznote").textContent = T.tzNota;
+  const sel = document.getElementById("tz");
+  sel.innerHTML = "";
+  ["latam","eu"].forEach(g=>{
+    const og = document.createElement("optgroup");
+    og.label = T.tzGrupos[g];
+    TIMEZONES.filter(z=>z.g===g).forEach(z=>{
+      const op = document.createElement("option");
+      op.value = z.id;
+      op.textContent = z[LANG];
+      if(z.id===TZ_USER) op.selected = true;
+      og.appendChild(op);
+    });
+    sel.appendChild(og);
+  });
 }
 
 function render(){
@@ -365,11 +524,18 @@ function render(){
       ? `<div class="people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}</div>`
       : `<div class="people"><span class="empty">${T.nadie}</span></div>`;
 
+    const mostrarLocal = TZ_USER !== TZ_REF;
+    const localLine = mostrarLocal
+      ? `<div class="local"><span class="lt">${T.tuHora}</span><span class="lh">${rangoLocal(dia.key,franja,TZ_USER)}</span></div>`
+      : "";
+
     slot.innerHTML = `
       <div class="head">
         <span class="time">${franja}–${finFranja(franja)}</span>
+        ${mostrarLocal?`<span class="ref">${T.refCiudad}</span>`:""}
         <span class="count">${gente.length?T.personas(gente.length):""}</span>
       </div>
+      ${localLine}
       ${personas}
       <div class="actions">
         <button class="join">${T.sumarme}</button>
@@ -425,6 +591,7 @@ async function enviar(ev,form,fecha){
 
   if(!CONFIG.endpoint){
     INSCRIPCIONES.push({fecha:datos.fecha,franja:datos.franja,nombre:datos.nombre});
+    mostrarConfirm(datos.fecha, datos.franja);
     render(); return;
   }
   try{
@@ -436,6 +603,7 @@ async function enviar(ev,form,fecha){
     params.append("lang", LANG);
     await fetch(CONFIG.endpoint,{ method:"POST", body:params });
     INSCRIPCIONES.push({fecha:datos.fecha,franja:datos.franja,nombre:datos.nombre}); // optimista
+    mostrarConfirm(datos.fecha, datos.franja);
     render();
   }catch(e){
     btn.disabled=false; btn.textContent=t().confirmar;
@@ -474,10 +642,74 @@ async function borrar(ev,form,fecha){
 
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 
+/* ====== Calendario del lado del cliente (.ics) ======
+   Genera el .ics en el navegador, sin pasar por el mail: el recordatorio NO
+   depende de la cuota de Gmail (~100/día). Evento puntual de 40 min anclado a
+   la hora de Mendoza (offset fijo -03:00) + alarma 15 min antes. METHOD:PUBLISH
+   para que el calendario lo agregue directo, sin RSVP. */
+function construirICSCliente(fecha, franja){
+  const T = t();
+  const ini = new Date(`${fecha}T${franja}:00${TZ_REF_OFFSET}`);
+  const fin = new Date(ini.getTime() + 40*60000);
+  const pad = n => String(n).padStart(2,"0");
+  const stamp = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+  const esc = s => String(s).replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n");
+  const uid = ((self.crypto && crypto.randomUUID) ? crypto.randomUUID()
+              : Date.now()+"-"+Math.random().toString(16).slice(2)) + "@oracionporlapaz";
+  return [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Oracion por la Paz//ES","CALSCALE:GREGORIAN","METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    "UID:"+uid,
+    "DTSTAMP:"+stamp(new Date()),
+    "DTSTART:"+stamp(ini),
+    "DTEND:"+stamp(fin),
+    "SUMMARY:"+esc(T.evtTitulo),
+    "DESCRIPTION:"+esc(T.evtDesc),
+    "BEGIN:VALARM","TRIGGER:-PT15M","ACTION:DISPLAY","DESCRIPTION:"+esc(T.evtAlarma),"END:VALARM",
+    "END:VEVENT","END:VCALENDAR"
+  ].join("\r\n");
+}
+function descargarICS(fecha, franja){
+  const blob = new Blob([construirICSCliente(fecha, franja)], {type:"text/calendar;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "turno-oracion.ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+/* Confirmación tras anotarse: mensaje + botón de calendario. Vive fuera del
+   tablero, así sobrevive al render(). */
+function mostrarConfirm(fecha, franja){
+  const T = t();
+  const c = document.getElementById("confirm");
+  c.style.display = "flex";
+  c.innerHTML = "";
+  const msg = document.createElement("span");
+  msg.className = "ctxt";
+  msg.textContent = T.confirmTexto(fecha, franja);
+  const add = document.createElement("button");
+  add.className = "addcal";
+  add.textContent = T.addCal;
+  add.addEventListener("click", ()=>descargarICS(fecha, franja));
+  const close = document.createElement("button");
+  close.className = "cclose";
+  close.textContent = T.cerrar;
+  close.addEventListener("click", ()=>{ c.style.display="none"; });
+  c.append(msg, add, close);
+  c.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
 /* ---- selector de idioma ---- */
 document.getElementById("lang").addEventListener("click",e=>{
   const b = e.target.closest("button"); if(!b) return;
   LANG = b.dataset.l; localStorage.setItem("lang",LANG); render();
+});
+
+/* ---- selector de zona horaria ---- */
+document.getElementById("tz").addEventListener("change",e=>{
+  TZ_USER = e.target.value;
+  localStorage.setItem("tz",TZ_USER);
+  render();
 });
 
 /* arranque: día de hoy seleccionado por defecto */
