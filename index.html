@@ -6,199 +6,71 @@
 <title>Oración por la Paz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Archivo:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --paper:#faf8f3;
-    --ink:#1c1b18;
-    --grey:#6f6d66;
-    --faint:#a6a39a;
-    --line:#e2ded3;
-    --accent:#2f3e63;
-    --display:'Fraunces',Georgia,serif;
-    --body:'Newsreader',Georgia,serif;
-    --label:'Archivo',system-ui,sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    background:var(--paper);color:var(--ink);
-    font-family:var(--body);font-size:18px;line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    padding:clamp(1.5rem,5vw,4rem) clamp(1rem,5vw,2rem);
-  }
-  .wrap{max-width:980px;margin:0 auto}
-
-  /* ---- encabezado + selector de idioma ---- */
-  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
-  .kicker{
-    font-family:var(--label);font-size:12px;font-weight:500;
-    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
-    margin-bottom:.6rem;
-  }
-  .lang{display:flex;gap:.1rem;font-family:var(--label);font-size:12px;flex-shrink:0}
-  .lang button{
-    background:none;border:1px solid var(--line);color:var(--grey);
-    font-family:var(--label);font-size:11px;font-weight:500;letter-spacing:.08em;
-    padding:.3rem .55rem;cursor:pointer;
-  }
-  .lang button.active{background:var(--accent);color:var(--paper);border-color:var(--accent)}
-
-  h1{
-    font-family:var(--display);font-weight:400;
-    font-size:clamp(2.6rem,7vw,4.4rem);line-height:1.02;
-    letter-spacing:-.01em;margin-bottom:1.1rem;
-  }
-  .lede{font-size:1.05rem;color:var(--grey);max-width:48ch}
-  .rule{height:1px;background:var(--line);margin:2rem 0}
-
-  .banner{
-    font-family:var(--label);font-size:12px;letter-spacing:.02em;
-    background:#fff;border:1px dashed var(--accent);color:var(--accent);
-    padding:.6rem .8rem;margin-bottom:1.6rem;
-  }
-
-  .confirm{
-    display:flex;align-items:center;flex-wrap:wrap;gap:.7rem 1rem;
-    background:#fff;border:1px solid var(--accent);
-    padding:.8rem 1rem;margin-bottom:1.6rem;
-  }
-  .confirm .ctxt{font-size:.95rem;color:var(--ink);flex:1 1 16rem}
-  .confirm .addcal{
-    font-family:var(--label);font-size:13px;font-weight:500;letter-spacing:.04em;
-    background:var(--accent);color:var(--paper);border:none;
-    padding:.5rem .9rem;cursor:pointer;flex-shrink:0;
-  }
-  .confirm .addcal:hover{opacity:.85}
-  .confirm .cclose{
-    font-family:var(--label);font-size:12px;color:var(--grey);
-    background:none;border:none;cursor:pointer;text-decoration:underline;
-  }
-
-  .meta{
-    display:flex;justify-content:space-between;align-items:baseline;
-    flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:1.4rem;
-  }
-  .meta .week{font-family:var(--display);font-size:1.5rem}
-  .meta .cover{font-family:var(--label);font-size:13px;color:var(--grey);letter-spacing:.02em}
-
-  /* ---- selector de zona horaria ---- */
-  .tzrow{
-    display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .7rem;
-    margin-bottom:1.4rem;
-  }
-  .tzrow label{
-    font-family:var(--label);font-size:11px;font-weight:500;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--grey);
-  }
-  .tzrow select{
-    font-family:var(--label);font-size:13px;color:var(--ink);
-    background:#fff;border:1px solid var(--line);border-radius:0;
-    padding:.4rem .6rem;cursor:pointer;
-  }
-  .tzrow select:focus{outline:none;border-color:var(--accent)}
-  .tzrow .tznote{
-    font-family:var(--label);font-size:11px;color:var(--faint);
-    flex:1 1 14rem;line-height:1.5;
-  }
-
-  /* ---- pestañas por día ---- */
-  .tabs{
-    display:flex;flex-wrap:wrap;gap:1px;background:var(--line);
-    border:1px solid var(--line);margin-bottom:1.4rem;
-  }
-  .tab{
-    flex:1 1 auto;min-width:84px;background:var(--paper);
-    font-family:var(--label);font-size:12px;font-weight:500;letter-spacing:.04em;
-    color:var(--grey);border:none;cursor:pointer;
-    padding:.7rem .4rem;display:flex;flex-direction:column;align-items:center;gap:.25rem;
-  }
-  .tab .tnum{font-family:var(--display);font-size:1.15rem;color:var(--ink);line-height:1}
-  .tab .tcov{font-size:10px;letter-spacing:.06em;color:var(--faint)}
-  .tab.active{background:var(--accent);color:var(--paper)}
-  .tab.active .tnum,.tab.active .tcov{color:var(--paper)}
-
-  /* ---- lista de franjas ---- */
-  .slots{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
-  .slot{background:var(--paper);padding:.85rem 1rem}
-  .slot .head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
-  .slot .time{font-family:var(--display);font-size:1.1rem;color:var(--accent);white-space:nowrap}
-  .slot .ref{font-family:var(--label);font-size:10px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
-  .slot .local{
-    font-family:var(--label);font-size:12px;color:var(--grey);
-    margin-top:.15rem;display:flex;align-items:baseline;gap:.45rem;
-  }
-  .slot .local .lt{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-  .slot .local .lh{font-family:var(--display);color:var(--ink)}
-  .slot .count{
-    font-family:var(--label);font-size:10px;font-weight:500;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--faint);
-  }
-  .slot.has .count{color:var(--accent)}
-  .slot .people{font-size:.95rem;color:var(--ink);margin:.25rem 0 0}
-  .slot .people .empty{color:var(--faint);font-style:italic}
-  .slot .actions{display:flex;gap:1.3rem;align-items:baseline;margin-top:.5rem}
-  .slot .join,.slot .leave{
-    font-family:var(--label);font-size:12px;font-weight:500;
-    background:none;border:none;cursor:pointer;padding:0;line-height:1.4;
-  }
-  .slot .join{color:var(--accent);border-bottom:1px solid var(--accent)}
-  .slot .leave{color:var(--grey);border-bottom:1px solid var(--line)}
-  .slot .join:hover,.slot .leave:hover{opacity:.6}
-
-  .form{margin-top:.7rem;display:none;flex-direction:column;gap:.5rem;max-width:340px}
-  .form.open{display:flex}
-  .form label{font-family:var(--label);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
-  .form input{
-    font-family:var(--body);font-size:.95rem;color:var(--ink);
-    background:#fff;border:1px solid var(--line);border-radius:0;
-    padding:.5rem .6rem;width:100%;
-  }
-  .form input:focus{outline:none;border-color:var(--accent)}
-  .form .row{display:flex;flex-direction:column;gap:.2rem}
-  .form button[type=submit]{
-    font-family:var(--label);font-size:13px;font-weight:500;letter-spacing:.04em;
-    background:var(--accent);color:var(--paper);border:none;
-    padding:.55rem .9rem;cursor:pointer;align-self:flex-start;margin-top:.2rem;
-  }
-  .form button[type=submit]:disabled{opacity:.5;cursor:default}
-  .form .cancel{font-family:var(--label);font-size:12px;color:var(--grey);background:none;border:none;cursor:pointer;text-decoration:underline;align-self:flex-start}
-
-  .note{font-family:var(--label);font-size:12px;color:var(--grey);margin-top:2.2rem;line-height:1.7;max-width:60ch}
-  .state{font-family:var(--label);font-size:13px;color:var(--grey);padding:2rem 0}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="kicker" id="kicker">Cadena de oración</div>
-    <div class="lang" id="lang">
+<header class="masthead">
+  <div class="wrap mast-inner">
+    <div class="kicker" id="kicker">Campaña de oración por la paz mundial</div>
+    <div class="lang" id="lang" role="group" aria-label="Language / Idioma">
       <button data-l="es">ES</button>
       <button data-l="en">EN</button>
     </div>
   </div>
-  <h1 id="title">Oración por la Paz</h1>
-  <p class="lede" id="lede"></p>
-  <div class="rule"></div>
+</header>
 
-  <div id="banner" class="banner" style="display:none"></div>
-  <div id="confirm" class="confirm" style="display:none"></div>
+<main>
+  <section class="wrap hero">
+    <h1 id="title">Oración por la Paz</h1>
+    <p class="lede" id="lede"></p>
+    <div class="rule"></div>
+    <p class="callout" id="callout"></p>
+  </section>
 
-  <div class="meta">
-    <div class="week" id="week">—</div>
-    <div class="cover" id="cover"></div>
+  <section class="wrap board-section" id="agenda">
+    <h2 class="section-h" id="sectionTitle">Agendá tu turno</h2>
+
+    <div id="banner" class="banner" style="display:none"></div>
+    <div id="confirm" class="confirm" style="display:none"></div>
+
+    <div class="meta">
+      <div class="week" id="week">—</div>
+      <div class="cover" id="cover"></div>
+    </div>
+
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="coverstrip" id="coverstrip" aria-hidden="true"></div>
+
+    <div class="tzrow">
+      <label for="tz" id="tzlabel">Tu zona horaria</label>
+      <select id="tz"></select>
+      <span class="tznote" id="tznote"></span>
+    </div>
+
+    <div id="board" class="state">Cargando…</div>
+
+    <p class="note" id="note"></p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap foot-grid">
+    <div class="foot-col foot-about">
+      <h3 id="footBrand">Oración por la Paz</h3>
+      <p id="footAbout"></p>
+    </div>
+    <div class="foot-col">
+      <h3 id="footLinksH">Enlaces</h3>
+      <nav class="foot-links" id="footLinks" aria-label="Footer"></nav>
+    </div>
+    <div class="foot-col">
+      <h3 id="footContactH">Contacto</h3>
+      <div class="foot-social" id="footSocial"></div>
+    </div>
   </div>
-
-  <div class="tzrow">
-    <label for="tz" id="tzlabel">Tu zona horaria</label>
-    <select id="tz"></select>
-    <span class="tznote" id="tznote"></span>
-  </div>
-
-  <div class="tabs" id="tabs"></div>
-  <div id="board" class="state">Cargando…</div>
-
-  <p class="note" id="note"></p>
-</div>
+  <div class="wrap foot-bottom"><span id="footCopy"></span></div>
+</footer>
 
 <script>
 /* ====== CONFIGURACIÓN ======
@@ -253,9 +125,17 @@ if(!TZ_IDS.has(TZ_USER)){
 /* ====== TEXTOS (i18n) ====== */
 const I18N = {
   es:{
-    kicker:"Cadena de oración",
+    kicker:"Campaña de oración por la paz mundial",
     title:"Oración por la Paz",
-    lede:"Oración perpetua, 24 horas. Cada día se divide en 36 turnos de 40 minutos. Elegí uno o más turnos y cubrilos para que la oración nunca se corte. Pueden anotarse varias personas en el mismo turno.",
+    lede:"Una forma concreta de actuar por el fin de los conflictos armados en el mundo. La oración no se corta nunca: cada día se divide en 36 turnos de 40 minutos y entre todos los cubrimos. Elegí uno o más turnos; pueden anotarse varias personas en el mismo.",
+    callout:"La campaña consiste en rezar el Rosario junto con la Coronilla de la Divina Misericordia una vez por semana, a una hora determinada, por esta intención.",
+    sectionTitle:"Agendá tu turno",
+    ahora:"Ahora",
+    footAbout:"Una campaña de oración por la paz mundial, unidos a través del Rosario y la Divina Misericordia.",
+    footLinksH:"Enlaces",
+    footContactH:"Contacto",
+    footLinks:[{label:"Agendar un turno",href:"#agenda"},{label:"Cómo rezar",href:"#"},{label:"Contacto",href:"#"}],
+    footCopy:(y)=>`© ${y} Oración por la Paz. Todos los derechos reservados.`,
     dias:["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
     diasCorto:["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"],
     meses:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
@@ -295,9 +175,17 @@ const I18N = {
     htmlLang:"es"
   },
   en:{
-    kicker:"Prayer chain",
+    kicker:"Prayer campaign for world peace",
     title:"Prayer for Peace",
-    lede:"Perpetual prayer, 24 hours a day. Each day is split into 36 slots of 40 minutes. Choose one or more slots and cover them so prayer never stops. Several people can sign up for the same slot.",
+    lede:"A concrete way to act for the end of armed conflicts in the world. Prayer never stops: each day is split into 36 slots of 40 minutes and together we cover them. Choose one or more slots; several people can sign up for the same one.",
+    callout:"The campaign is to pray the Rosary together with the Chaplet of Divine Mercy once a week, at a set time, for this intention.",
+    sectionTitle:"Claim your slot",
+    ahora:"Now",
+    footAbout:"A prayer campaign for world peace, united through the Rosary and Divine Mercy.",
+    footLinksH:"Links",
+    footContactH:"Contact",
+    footLinks:[{label:"Claim a slot",href:"#agenda"},{label:"How to pray",href:"#"},{label:"Contact",href:"#"}],
+    footCopy:(y)=>`© ${y} Prayer for Peace. All rights reserved.`,
     dias:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
     diasCorto:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
     meses:["January","February","March","April","May","June","July","August","September","October","November","December"],
@@ -381,6 +269,15 @@ function finFranja(inicio){
   return `${String(Math.floor(mt/60)).padStart(2,"0")}:${String(mt%60).padStart(2,"0")}`;
 }
 
+/* franja en curso AHORA en hora de Mendoza → "HH:mm" (inicio del turno) */
+function franjaActualMza(){
+  const p = new Intl.DateTimeFormat("en-GB",{timeZone:TZ_REF,hourCycle:"h23",hour:"2-digit",minute:"2-digit"}).formatToParts(new Date());
+  const h = +((p.find(x=>x.type==="hour")||{}).value||0);
+  const m = +((p.find(x=>x.type==="minute")||{}).value||0);
+  const mins = Math.floor((h*60+m)/40)*40;
+  return `${String(Math.floor(mins/60)).padStart(2,"0")}:${String(mins%60).padStart(2,"0")}`;
+}
+
 /* ---- conversión de un turno a la hora local de TZ_USER ----
    Parte del instante absoluto (fecha+franja en Mendoza, offset fijo -03:00)
    y lo formatea en la zona elegida. Devuelve el rango "HH:mm–HH:mm" y, si en
@@ -453,12 +350,47 @@ function pintarChrome(){
   document.getElementById("kicker").textContent = T.kicker;
   document.getElementById("title").textContent = T.title;
   document.getElementById("lede").textContent = T.lede;
+  document.getElementById("callout").textContent = T.callout;
+  document.getElementById("sectionTitle").textContent = T.sectionTitle;
   document.getElementById("note").textContent = T.nota;
   document.title = T.title;
   document.querySelectorAll("#lang button").forEach(b=>{
     b.classList.toggle("active", b.dataset.l===LANG);
   });
   pintarTZ();
+  pintarFooter();
+}
+
+/* ---- pie de página: textos + enlaces + redes (placeholders) ---- */
+function pintarFooter(){
+  const T=t();
+  document.getElementById("footBrand").textContent   = T.title;
+  document.getElementById("footAbout").textContent   = T.footAbout;
+  document.getElementById("footLinksH").textContent  = T.footLinksH;
+  document.getElementById("footContactH").textContent= T.footContactH;
+  document.getElementById("footCopy").textContent    = T.footCopy(new Date().getFullYear());
+
+  const nav = document.getElementById("footLinks");
+  nav.innerHTML = "";
+  T.footLinks.forEach(l=>{
+    const a = document.createElement("a");
+    a.href = l.href; a.textContent = l.label;
+    nav.appendChild(a);
+  });
+
+  // Redes: links placeholder (#). Pegá las URLs reales cuando estén.
+  const social = document.getElementById("footSocial");
+  social.innerHTML = `
+    <a href="#" aria-label="Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+    </a>
+    <a href="#" aria-label="WhatsApp" title="WhatsApp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M3.5 20.5l1.3-4.3A8 8 0 1 1 8 19.2l-4.5 1.3z"/><path d="M9 9.2c.2-.5.4-.5.7-.5h.5c.2 0 .4 0 .6.5l.7 1.6c.1.2 0 .4-.1.6l-.4.5c-.1.2-.2.3 0 .6.3.5.8 1.1 1.4 1.5.5.4.8.4 1 .3l.5-.4c.2-.2.4-.2.6-.1l1.5.8c.2.1.3.3.3.4 0 .6-.5 1.3-1 1.5-.5.2-1.4.3-3-.4-2-.8-3.3-2.8-3.4-3-.1-.2-.8-1.1-.8-2.1S8.7 9.5 9 9.2z" fill="currentColor" stroke="none"/>
+      </svg>
+    </a>`;
 }
 
 /* ---- selector de zona horaria: opciones agrupadas + textos i18n ---- */
@@ -495,6 +427,10 @@ function render(){
   document.getElementById("week").textContent = `${T.semanaDel} ${rangoTexto(dias)}`;
   document.getElementById("cover").textContent = T.cobertura(cubiertas.size);
 
+  // turno que se reza AHORA (hora de Mendoza)
+  const hoyKey = claveFecha(hoyEnTZ());
+  const franjaNow = franjaActualMza();
+
   // pestañas por día
   const tabs = document.getElementById("tabs");
   tabs.innerHTML = "";
@@ -504,21 +440,38 @@ function render(){
     ).size;
     const btn = document.createElement("button");
     btn.className = "tab"+(i===DIA_SEL?" active":"");
-    btn.innerHTML = `<span>${T.diasCorto[i]}</span><span class="tnum">${d.num}</span><span class="tcov">${T.cobDia(cubDia)}</span>`;
+    btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", i===DIA_SEL?"true":"false");
+    btn.innerHTML = `<span class="tlabel">${T.diasCorto[i]}</span><span class="tnum">${d.num}</span><span class="tcov">${T.cobDia(cubDia)}</span>`;
     btn.addEventListener("click",()=>{ DIA_SEL=i; render(); });
     tabs.appendChild(btn);
   });
 
   // franjas del día seleccionado
   const dia = dias[DIA_SEL];
+  const franjas = franjasDelDia();
+  const cubreEnDia = new Set(INSCRIPCIONES.filter(i=>i.fecha===dia.key).map(i=>i.franja));
+
+  // tira de cobertura: los 36 turnos del día de un vistazo
+  const strip = document.getElementById("coverstrip");
+  strip.innerHTML = "";
+  franjas.forEach(f=>{
+    const seg = document.createElement("i");
+    if(dia.key===hoyKey && f===franjaNow) seg.className="now";
+    else if(cubreEnDia.has(f)) seg.className="on";
+    strip.appendChild(seg);
+  });
+
+  // tarjetas de turnos
   const board = document.getElementById("board");
-  board.className = "slots";
+  board.className = "cards";
   board.innerHTML = "";
 
-  franjasDelDia().forEach(franja=>{
+  franjas.forEach(franja=>{
     const gente = INSCRIPCIONES.filter(i=>i.fecha===dia.key && i.franja===franja);
-    const slot = document.createElement("div");
-    slot.className = "slot"+(gente.length?" has":"");
+    const esAhora = (dia.key===hoyKey && franja===franjaNow);
+    const slot = document.createElement("article");
+    slot.className = "slot"+(gente.length?" has":"")+(esAhora?" now":"");
 
     const personas = gente.length
       ? `<div class="people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}</div>`
@@ -530,12 +483,11 @@ function render(){
       : "";
 
     slot.innerHTML = `
-      <div class="head">
-        <span class="time">${franja}–${finFranja(franja)}</span>
-        ${mostrarLocal?`<span class="ref">${T.refCiudad}</span>`:""}
-        <span class="count">${gente.length?T.personas(gente.length):""}</span>
-      </div>
+      ${esAhora?`<span class="nowbadge">${T.ahora}</span>`:""}
+      <div class="time">${franja}–${finFranja(franja)}</div>
+      ${mostrarLocal?`<div class="ref">${T.refCiudad}</div>`:""}
       ${localLine}
+      ${gente.length?`<div class="count">${T.personas(gente.length)}</div>`:""}
       ${personas}
       <div class="actions">
         <button class="join">${T.sumarme}</button>
@@ -714,6 +666,7 @@ document.getElementById("tz").addEventListener("change",e=>{
 
 /* arranque: día de hoy seleccionado por defecto */
 DIA_SEL = (hoyEnTZ().getUTCDay()+6)%7;
+pintarChrome(); // textos fijos visibles ya, sin esperar la red
 cargar();
 </script>
 </body>
