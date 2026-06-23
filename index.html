@@ -40,7 +40,6 @@
     </div>
 
     <div class="tabs" id="tabs" role="tablist"></div>
-    <div class="coverstrip" id="coverstrip" aria-hidden="true"></div>
 
     <div class="tzrow">
       <label for="tz" id="tzlabel">Tu zona horaria</label>
@@ -130,7 +129,7 @@ const I18N = {
     lede:"Una forma concreta de actuar por el fin de los conflictos armados en el mundo. La oración no se corta nunca: cada día se divide en 36 turnos de 40 minutos y entre todos los cubrimos. Elegí uno o más turnos; pueden anotarse varias personas en el mismo.",
     callout:"La campaña consiste en rezar el Rosario junto con la Coronilla de la Divina Misericordia una vez por semana, a una hora determinada, por esta intención.",
     sectionTitle:"Agendá tu turno",
-    ahora:"Ahora",
+    ahora:"Rezando ahora",
     footAbout:"Una campaña de oración por la paz mundial, unidos a través del Rosario y la Divina Misericordia.",
     footLinksH:"Enlaces",
     footContactH:"Contacto",
@@ -180,7 +179,7 @@ const I18N = {
     lede:"A concrete way to act for the end of armed conflicts in the world. Prayer never stops: each day is split into 36 slots of 40 minutes and together we cover them. Choose one or more slots; several people can sign up for the same one.",
     callout:"The campaign is to pray the Rosary together with the Chaplet of Divine Mercy once a week, at a set time, for this intention.",
     sectionTitle:"Claim your slot",
-    ahora:"Now",
+    ahora:"Praying now",
     footAbout:"A prayer campaign for world peace, united through the Rosary and Divine Mercy.",
     footLinksH:"Links",
     footContactH:"Contact",
@@ -439,7 +438,7 @@ function render(){
       INSCRIPCIONES.filter(x=>x.fecha===d.key).map(x=>x.franja)
     ).size;
     const btn = document.createElement("button");
-    btn.className = "tab"+(i===DIA_SEL?" active":"");
+    btn.className = "tab"+(i===DIA_SEL?" active":"")+(d.key===hoyKey?" today":"");
     btn.setAttribute("role","tab");
     btn.setAttribute("aria-selected", i===DIA_SEL?"true":"false");
     btn.innerHTML = `<span class="tlabel">${T.diasCorto[i]}</span><span class="tnum">${d.num}</span><span class="tcov">${T.cobDia(cubDia)}</span>`;
@@ -450,47 +449,37 @@ function render(){
   // franjas del día seleccionado
   const dia = dias[DIA_SEL];
   const franjas = franjasDelDia();
-  const cubreEnDia = new Set(INSCRIPCIONES.filter(i=>i.fecha===dia.key).map(i=>i.franja));
 
-  // tira de cobertura: los 36 turnos del día de un vistazo
-  const strip = document.getElementById("coverstrip");
-  strip.innerHTML = "";
-  franjas.forEach(f=>{
-    const seg = document.createElement("i");
-    if(dia.key===hoyKey && f===franjaNow) seg.className="now";
-    else if(cubreEnDia.has(f)) seg.className="on";
-    strip.appendChild(seg);
-  });
-
-  // tarjetas de turnos
+  // la vigilia: una línea continua de turnos
   const board = document.getElementById("board");
-  board.className = "cards";
+  board.className = "timeline";
   board.innerHTML = "";
 
   franjas.forEach(franja=>{
     const gente = INSCRIPCIONES.filter(i=>i.fecha===dia.key && i.franja===franja);
     const esAhora = (dia.key===hoyKey && franja===franjaNow);
     const slot = document.createElement("article");
-    slot.className = "slot"+(gente.length?" has":"")+(esAhora?" now":"");
+    slot.className = "slot"+(gente.length?" has":" empty")+(esAhora?" now":"");
 
     const personas = gente.length
-      ? `<div class="people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}</div>`
-      : `<div class="people"><span class="empty">${T.nadie}</span></div>`;
+      ? `<div class="slot-people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}<span class="cnt">${T.personas(gente.length)}</span></div>`
+      : `<div class="slot-people"><span class="empty">${T.nadie}</span></div>`;
 
     const mostrarLocal = TZ_USER !== TZ_REF;
     const localLine = mostrarLocal
-      ? `<div class="local"><span class="lt">${T.tuHora}</span><span class="lh">${rangoLocal(dia.key,franja,TZ_USER)}</span></div>`
+      ? `<div class="slot-local"><span class="lt">${T.tuHora}</span><span class="lh">${rangoLocal(dia.key,franja,TZ_USER)}</span><span class="ref">· ${T.refCiudad}</span></div>`
       : "";
 
     slot.innerHTML = `
-      ${esAhora?`<span class="nowbadge">${T.ahora}</span>`:""}
-      <div class="time">${franja}–${finFranja(franja)}</div>
-      ${mostrarLocal?`<div class="ref">${T.refCiudad}</div>`:""}
-      ${localLine}
-      ${gente.length?`<div class="count">${T.personas(gente.length)}</div>`:""}
-      ${personas}
-      <div class="actions">
-        <button class="join">${T.sumarme}</button>
+      <span class="node" aria-hidden="true"></span>
+      <div class="slot-main">
+        ${esAhora?`<span class="now-tag"><span class="dot"></span>${T.ahora}</span>`:""}
+        <div class="slot-time">${franja}–${finFranja(franja)}</div>
+        ${localLine}
+        ${personas}
+      </div>
+      <div class="slot-side">
+        <button class="join">${T.sumarme} <span class="arw" aria-hidden="true">→</span></button>
         ${gente.length?`<button class="leave">${T.borrarme}</button>`:""}
       </div>
       <form class="form alta" data-franja="${franja}">
