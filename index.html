@@ -3,33 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oración por la Paz</title>
+<title>Oración por la Paz Mundial | Cadena de Rosario Perpetua</title>
+<meta name="description" content="Cadena mundial de oración perpetua por la paz. Reservá tu turno semanal de 40 minutos y rezá el Rosario y la Coronilla de la Divina Misericordia.">
+<meta name="theme-color" content="#f6f3ec">
+<link rel="canonical" href="https://nelsonncrypto20.github.io/oracion/">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="logo/favicon-64.png">
+<link rel="apple-touch-icon" href="logo/favicon-64.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Un grano de mostaza">
+<meta property="og:title" content="Oración por la Paz Mundial | Cadena de Rosario Perpetua">
+<meta property="og:description" content="Cadena mundial de oración perpetua por la paz. Reservá tu turno semanal.">
+<meta property="og:image" content="https://nelsonncrypto20.github.io/oracion/logo/l2-520.png">
+<meta property="og:url" content="https://nelsonncrypto20.github.io/oracion/">
+<meta property="og:locale" content="es_AR">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oración por la Paz Mundial | Cadena de Rosario Perpetua">
+<meta name="twitter:description" content="Cadena mundial de oración perpetua por la paz. Reservá tu turno semanal.">
+<meta name="twitter:image" content="https://nelsonncrypto20.github.io/oracion/logo/l2-520.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="masthead">
+<a class="skip-link" href="#agenda" id="skipLink">Saltar al tablero de turnos</a>
+
+<header class="masthead" id="top">
   <div class="wrap mast-inner">
-    <div class="kicker" id="kicker">Campaña de oración por la paz mundial</div>
+    <a class="brand" href="#top" aria-label="Un grano de mostaza — Oración por la Paz">
+      <img id="brandLogo" src="logo/l2-520.png" width="240" height="139"
+           alt="Un grano de mostaza — Campaña de oración" decoding="async">
+    </a>
     <div class="lang" id="lang" role="group" aria-label="Language / Idioma">
-      <button data-l="es">ES</button>
-      <button data-l="en">EN</button>
+      <button data-l="es" type="button" aria-pressed="true">ES</button>
+      <button data-l="en" type="button" aria-pressed="false">EN</button>
     </div>
   </div>
 </header>
 
 <main>
   <section class="wrap hero">
-    <h1 id="title">Oración por la Paz</h1>
-    <p class="lede" id="lede"></p>
-    <div class="rule"></div>
-    <p class="callout" id="callout"></p>
+    <div class="hero-text">
+      <p class="eyebrow" id="kicker">Campaña de oración por la paz mundial</p>
+      <h1 id="title">Oración por la Paz</h1>
+      <p class="lede" id="lede"></p>
+      <div class="hero-cta">
+        <a class="btn-primary" href="#agenda" id="ctaPrimary">Agendar mi turno</a>
+        <a class="btn-link" href="#cita" id="ctaSecondary">Una palabra de aliento</a>
+      </div>
+    </div>
+    <figure class="hero-figure" aria-hidden="true">
+      <img src="assets/rosario.jpg" width="980" height="653" alt="" decoding="async">
+    </figure>
+  </section>
+
+  <section class="wrap metrics" id="metrics" aria-label="La cadena en números">
+    <div class="metric">
+      <svg class="m-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3.5-6 7-6s7 2 7 6"/>
+      </svg>
+      <span class="m-num" id="mPersonas">—</span>
+      <span class="m-label" id="mPersonasLbl">personas rezando</span>
+    </div>
+    <div class="metric">
+      <svg class="m-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+      </svg>
+      <span class="m-num" id="mTurnos">—</span>
+      <span class="m-label" id="mTurnosLbl">turnos cubiertos esta semana</span>
+    </div>
+  </section>
+
+  <section class="wrap quote" id="cita">
+    <blockquote id="quoteText">«Bienaventurados los que trabajan por la paz, porque serán llamados hijos de Dios.»</blockquote>
+    <cite id="quoteCite">Mateo 5, 9</cite>
   </section>
 
   <section class="wrap board-section" id="agenda">
     <h2 class="section-h" id="sectionTitle">Agendá tu turno</h2>
+    <p class="board-intro" id="boardIntro"></p>
 
     <div id="banner" class="banner" style="display:none"></div>
     <div id="confirm" class="confirm" style="display:none"></div>
@@ -56,7 +116,8 @@
 <footer class="site-footer">
   <div class="wrap foot-grid">
     <div class="foot-col foot-about">
-      <h3 id="footBrand">Oración por la Paz</h3>
+      <img class="foot-logo" src="logo/l2-520.png" width="200" height="116"
+           alt="Un grano de mostaza" loading="lazy" decoding="async">
       <p id="footAbout"></p>
     </div>
     <div class="foot-col">
@@ -126,15 +187,24 @@ const I18N = {
   es:{
     kicker:"Campaña de oración por la paz mundial",
     title:"Oración por la Paz",
-    lede:"Una forma concreta de actuar por el fin de los conflictos armados en el mundo. La oración no se corta nunca: cada día se divide en 36 turnos de 40 minutos y entre todos los cubrimos. Elegí uno o más turnos; pueden anotarse varias personas en el mismo.",
-    callout:"La campaña consiste en rezar el Rosario junto con la Coronilla de la Divina Misericordia una vez por semana, a una hora determinada, por esta intención.",
+    lede:"Una sola oración, las 24 horas del día, sostenida entre todos.",
+    boardIntro:"Elegí un turno de 40 minutos para rezar el Rosario y la Coronilla de la Divina Misericordia. Pueden anotarse varias personas en el mismo.",
     sectionTitle:"Agendá tu turno",
     ahora:"Rezando ahora",
+    skip:"Saltar al tablero de turnos",
+    ctaPrimary:"Agendar mi turno",
+    ctaSecondary:"Una palabra de aliento",
+    mPersonas:"personas rezando",
+    mTurnos:"turnos cubiertos esta semana",
+    quote:"«Bienaventurados los que trabajan por la paz, porque serán llamados hijos de Dios.»",
+    quoteCite:"Mateo 5, 9",
+    verDetalle:"Ver detalle del turno",
+    ocultarDetalle:"Ocultar detalle del turno",
     footAbout:"Una campaña de oración por la paz mundial, unidos a través del Rosario y la Divina Misericordia.",
     footLinksH:"Enlaces",
     footContactH:"Contacto",
-    footLinks:[{label:"Agendar un turno",href:"#agenda"},{label:"Cómo rezar",href:"#"},{label:"Contacto",href:"#"}],
-    footCopy:(y)=>`© ${y} Oración por la Paz. Todos los derechos reservados.`,
+    footLinks:[{label:"Agendar un turno",href:"#agenda"},{label:"Cómo rezar el Rosario",href:"#"},{label:"Cómo rezar la Coronilla",href:"#"},{label:"Preguntas frecuentes",href:"#"}],
+    footCopy:(y)=>`© ${y} Un grano de mostaza · Oración por la Paz. Todos los derechos reservados.`,
     dias:["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
     diasCorto:["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"],
     meses:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
@@ -176,15 +246,24 @@ const I18N = {
   en:{
     kicker:"Prayer campaign for world peace",
     title:"Prayer for Peace",
-    lede:"A concrete way to act for the end of armed conflicts in the world. Prayer never stops: each day is split into 36 slots of 40 minutes and together we cover them. Choose one or more slots; several people can sign up for the same one.",
-    callout:"The campaign is to pray the Rosary together with the Chaplet of Divine Mercy once a week, at a set time, for this intention.",
+    lede:"One prayer, around the clock, upheld by all of us.",
+    boardIntro:"Choose a 40-minute slot to pray the Rosary and the Chaplet of Divine Mercy. Several people can join the same one.",
     sectionTitle:"Claim your slot",
     ahora:"Praying now",
+    skip:"Skip to the slots board",
+    ctaPrimary:"Claim my slot",
+    ctaSecondary:"A word of encouragement",
+    mPersonas:"people praying",
+    mTurnos:"slots covered this week",
+    quote:"“Blessed are the peacemakers, for they will be called children of God.”",
+    quoteCite:"Matthew 5:9",
+    verDetalle:"View slot details",
+    ocultarDetalle:"Hide slot details",
     footAbout:"A prayer campaign for world peace, united through the Rosary and Divine Mercy.",
     footLinksH:"Links",
     footContactH:"Contact",
-    footLinks:[{label:"Claim a slot",href:"#agenda"},{label:"How to pray",href:"#"},{label:"Contact",href:"#"}],
-    footCopy:(y)=>`© ${y} Prayer for Peace. All rights reserved.`,
+    footLinks:[{label:"Claim a slot",href:"#agenda"},{label:"How to pray the Rosary",href:"#"},{label:"How to pray the Chaplet",href:"#"},{label:"Frequently asked questions",href:"#"}],
+    footCopy:(y)=>`© ${y} A Mustard Seed · Prayer for Peace. All rights reserved.`,
     dias:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
     diasCorto:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
     meses:["January","February","March","April","May","June","July","August","September","October","November","December"],
@@ -324,6 +403,18 @@ function demoData(){
   ];
 }
 
+/* skeleton loader mientras llega la respuesta (sólo UI, no toca el fetch) */
+function pintarSkeleton(){
+  const board = document.getElementById("board");
+  board.className = "timeline skeleton";
+  board.setAttribute("aria-busy","true");
+  let html = "";
+  for(let i=0;i<8;i++){
+    html += `<div class="sk-row" aria-hidden="true"><span class="sk-node"></span><span class="sk-time"></span><span class="sk-status"></span></div>`;
+  }
+  board.innerHTML = html;
+}
+
 async function cargar(){
   if(!CONFIG.endpoint){
     const b=document.getElementById("banner");
@@ -331,6 +422,7 @@ async function cargar(){
     INSCRIPCIONES = demoData();
     render(); return;
   }
+  pintarSkeleton();
   try{
     const r = await fetch(CONFIG.endpoint,{method:"GET"});
     const j = await r.json();
@@ -338,6 +430,7 @@ async function cargar(){
     render();
   }catch(e){
     document.getElementById("board").className="state";
+    document.getElementById("board").removeAttribute("aria-busy");
     document.getElementById("board").textContent = t().errCargar;
   }
 }
@@ -346,15 +439,26 @@ async function cargar(){
 function pintarChrome(){
   const T=t();
   document.documentElement.lang = T.htmlLang;
+  document.getElementById("skipLink").textContent = T.skip;
   document.getElementById("kicker").textContent = T.kicker;
   document.getElementById("title").textContent = T.title;
   document.getElementById("lede").textContent = T.lede;
-  document.getElementById("callout").textContent = T.callout;
+  document.getElementById("boardIntro").textContent = T.boardIntro;
+  document.getElementById("ctaPrimary").textContent = T.ctaPrimary;
+  document.getElementById("ctaSecondary").textContent = T.ctaSecondary;
+  document.getElementById("mPersonasLbl").textContent = T.mPersonas;
+  document.getElementById("mTurnosLbl").textContent = T.mTurnos;
+  document.getElementById("quoteText").textContent = T.quote;
+  document.getElementById("quoteCite").textContent = T.quoteCite;
   document.getElementById("sectionTitle").textContent = T.sectionTitle;
   document.getElementById("note").textContent = T.nota;
-  document.title = T.title;
+  document.title = T.title + (LANG==="es"
+    ? " · Cadena de Rosario perpetua por la paz"
+    : " · Perpetual Rosary chain for peace");
   document.querySelectorAll("#lang button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.l===LANG);
+    const on = b.dataset.l===LANG;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on?"true":"false");
   });
   pintarTZ();
   pintarFooter();
@@ -363,7 +467,6 @@ function pintarChrome(){
 /* ---- pie de página: textos + enlaces + redes (placeholders) ---- */
 function pintarFooter(){
   const T=t();
-  document.getElementById("footBrand").textContent   = T.title;
   document.getElementById("footAbout").textContent   = T.footAbout;
   document.getElementById("footLinksH").textContent  = T.footLinksH;
   document.getElementById("footContactH").textContent= T.footContactH;
@@ -426,6 +529,12 @@ function render(){
   document.getElementById("week").textContent = `${T.semanaDel} ${rangoTexto(dias)}`;
   document.getElementById("cover").textContent = T.cobertura(cubiertas.size);
 
+  // métricas reales (prueba social): personas anotadas esta semana + turnos cubiertos.
+  // Sólo lo que el backend realmente provee — no se inventan países ni intenciones.
+  const personasSemana = INSCRIPCIONES.filter(i=>clavesSemana.has(i.fecha)).length;
+  document.getElementById("mPersonas").textContent = personasSemana;
+  document.getElementById("mTurnos").textContent   = cubiertas.size;
+
   // turno que se reza AHORA (hora de Mendoza)
   const hoyKey = claveFecha(hoyEnTZ());
   const franjaNow = franjaActualMza();
@@ -453,16 +562,21 @@ function render(){
   // la vigilia: una línea continua de turnos
   const board = document.getElementById("board");
   board.className = "timeline";
+  board.setAttribute("aria-busy","false");
   board.innerHTML = "";
 
   franjas.forEach(franja=>{
     const gente = INSCRIPCIONES.filter(i=>i.fecha===dia.key && i.franja===franja);
     const esAhora = (dia.key===hoyKey && franja===franjaNow);
+    const detId = `dt-${dia.key}-${franja.replace(":","")}`;
+    const rango = `${franja}–${finFranja(franja)}`;
+    const estado = gente.length ? T.personas(gente.length) : T.nadie;
+
     const slot = document.createElement("article");
     slot.className = "slot"+(gente.length?" has":" empty")+(esAhora?" now":"");
 
     const personas = gente.length
-      ? `<div class="slot-people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}<span class="cnt">${T.personas(gente.length)}</span></div>`
+      ? `<div class="slot-people">${gente.map(g=>escapeHtml(g.nombre)).join(" · ")}</div>`
       : `<div class="slot-people"><span class="empty">${T.nadie}</span></div>`;
 
     const mostrarLocal = TZ_USER !== TZ_REF;
@@ -470,34 +584,51 @@ function render(){
       ? `<div class="slot-local"><span class="lt">${T.tuHora}</span><span class="lh">${rangoLocal(dia.key,franja,TZ_USER)}</span><span class="ref">· ${T.refCiudad}</span></div>`
       : "";
 
+    // Modo compacto: el resumen es un botón (accesible por teclado) que expande
+    // el detalle. El turno que se reza AHORA arranca expandido.
     slot.innerHTML = `
-      <span class="node" aria-hidden="true"></span>
-      <div class="slot-main">
-        ${esAhora?`<span class="now-tag"><span class="dot"></span>${T.ahora}</span>`:""}
-        <div class="slot-time">${franja}–${finFranja(franja)}</div>
+      <button class="slot-summary" type="button" aria-expanded="${esAhora?"true":"false"}" aria-controls="${detId}"
+              aria-label="${rango} · ${esAhora?T.ahora+" · ":""}${estado}">
+        <span class="node" aria-hidden="true"></span>
+        <span class="s-time">${franja}<span class="s-end">–${finFranja(franja)}</span></span>
+        <span class="s-status">
+          ${esAhora?`<span class="now-tag"><span class="dot"></span>${T.ahora}</span>`:""}
+          <span class="s-count">${estado}</span>
+        </span>
+        <span class="chev" aria-hidden="true"></span>
+      </button>
+      <div class="slot-detail" id="${detId}" role="region" aria-label="${rango}" ${esAhora?"":"hidden"}>
         ${localLine}
-        ${personas}
-      </div>
-      <div class="slot-side">
-        <button class="join">${T.sumarme} <span class="arw" aria-hidden="true">→</span></button>
-        ${gente.length?`<button class="leave">${T.borrarme}</button>`:""}
-      </div>
-      <form class="form alta" data-franja="${franja}">
-        <div class="row"><label>${T.nombre}</label><input name="nombre" required maxlength="60" placeholder="${T.nombre}"></div>
-        <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
-        <button type="submit">${T.confirmar}</button>
-        <button type="button" class="cancel">${T.cancelar}</button>
-      </form>
-      ${gente.length?`<form class="form baja" data-franja="${franja}">
-        <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
-        <button type="submit">${T.confirmarBaja}</button>
-        <button type="button" class="cancel">${T.cancelar}</button>
-      </form>`:""}`;
+        ${gente.length?personas:""}
+        <div class="slot-side">
+          <button class="join" type="button">${T.sumarme} <span class="arw" aria-hidden="true">→</span></button>
+          ${gente.length?`<button class="leave" type="button">${T.borrarme}</button>`:""}
+        </div>
+        <form class="form alta" data-franja="${franja}">
+          <div class="row"><label>${T.nombre}</label><input name="nombre" required maxlength="60" placeholder="${T.nombre}"></div>
+          <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
+          <button type="submit">${T.confirmar}</button>
+          <button type="button" class="cancel">${T.cancelar}</button>
+        </form>
+        ${gente.length?`<form class="form baja" data-franja="${franja}">
+          <div class="row"><label>${T.email}</label><input name="email" type="email" required placeholder="tu@correo.com"></div>
+          <button type="submit">${T.confirmarBaja}</button>
+          <button type="button" class="cancel">${T.cancelar}</button>
+        </form>`:""}`;
+
+    // expandir / colapsar el turno
+    const summary = slot.querySelector(".slot-summary");
+    const detail  = slot.querySelector(".slot-detail");
+    summary.addEventListener("click",()=>{
+      const open = summary.getAttribute("aria-expanded")==="true";
+      summary.setAttribute("aria-expanded", open?"false":"true");
+      detail.hidden = open;
+    });
 
     const formAlta = slot.querySelector("form.alta");
     slot.querySelector(".join").addEventListener("click",()=>{
       const open = formAlta.classList.contains("open");
-      document.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
+      slot.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
       if(!open){ formAlta.classList.add("open"); formAlta.querySelector("input").focus(); }
     });
     formAlta.querySelector(".cancel").addEventListener("click",()=>formAlta.classList.remove("open"));
@@ -507,7 +638,7 @@ function render(){
     if(formBaja){
       slot.querySelector(".leave").addEventListener("click",()=>{
         const open = formBaja.classList.contains("open");
-        document.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
+        slot.querySelectorAll(".form.open").forEach(f=>f.classList.remove("open"));
         if(!open){ formBaja.classList.add("open"); formBaja.querySelector("input").focus(); }
       });
       formBaja.querySelector(".cancel").addEventListener("click",()=>formBaja.classList.remove("open"));
@@ -542,10 +673,16 @@ async function enviar(ev,form,fecha){
     params.append("nombre", datos.nombre);
     params.append("email", datos.email);
     params.append("lang", LANG);
-    await fetch(CONFIG.endpoint,{ method:"POST", body:params });
-    INSCRIPCIONES.push({fecha:datos.fecha,franja:datos.franja,nombre:datos.nombre}); // optimista
+    const r = await fetch(CONFIG.endpoint,{ method:"POST", body:params });
+    // Sin update optimista: validamos la respuesta del servidor y recién ahí
+    // refrescamos desde el server. (Endpoint, params y formato NO cambian.)
+    let j = null; try{ j = await r.json(); }catch(_){}
+    if(j && j.ok === false){
+      btn.disabled=false; btn.textContent=t().confirmar;
+      alert(t().errEnviar); return;
+    }
+    await cargar();                         // re-render con los datos reales del server
     mostrarConfirm(datos.fecha, datos.franja);
-    render();
   }catch(e){
     btn.disabled=false; btn.textContent=t().confirmar;
     alert(t().errEnviar);
