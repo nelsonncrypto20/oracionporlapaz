@@ -1,0 +1,311 @@
+/* ============================================================
+   Oración por la Paz — estilos · "La vigilia"
+   ------------------------------------------------------------
+   Concepto: un programa editorial, no una grilla de cajas. Una
+   sola LÍNEA continua atraviesa los 36 turnos del día —la cadena
+   que no se corta—. Cada turno es un nodo en esa línea: hueco si
+   está sin cubrir, lleno si ya hay gente, y ENCENDIDO (dorado, con
+   latido) el que se está rezando ahora. Tipografía grande en serif
+   para las horas, mucho aire, casi sin bordes.
+
+   Las variables de :root son el contrato (paleta + tipografías).
+   ============================================================ */
+
+:root{
+  --paper:#fce9c9;        /* papel cálido color miel */
+  --paper-2:#fae3bb;      /* superficie apenas más profunda */
+  --footer:#f7dcaa;       /* banda del pie */
+  --ink:#2a2218;          /* casi negro cálido */
+  --grey:#7a6748;         /* secundario */
+  --faint:#b09a72;        /* terciario / nodos vacíos */
+  --line:#e7d3a6;         /* hairline */
+  --line-soft:#efddb8;    /* separador interno, casi invisible */
+  --gold:#c8901f;         /* el turno vivo / acento */
+  --gold-soft:#e9bf68;
+  --gold-wash:#fbe6b0;    /* luz tenue del turno vivo */
+  --display:'Fraunces',Georgia,serif;
+  --body:'Archivo',system-ui,sans-serif;
+  --label:'Archivo',system-ui,sans-serif;
+  --measure:760px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.62;font-weight:400;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+.wrap{max-width:var(--measure);margin:0 auto;padding-inline:clamp(1.2rem,5vw,2rem)}
+.wrap-wide{max-width:1080px;margin:0 auto;padding-inline:clamp(1.2rem,5vw,2.4rem)}
+
+::selection{background:var(--ink);color:var(--paper)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:1px}
+
+/* ============================================================
+   Masthead
+   ============================================================ */
+.masthead{padding-block:clamp(1.3rem,4vw,2rem)}
+.mast-inner{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.kicker{
+  font-family:var(--label);font-size:11.5px;font-weight:600;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--grey);
+  display:inline-flex;align-items:center;gap:.6rem;
+}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none}
+.lang{display:inline-flex;gap:.9rem;flex-shrink:0}
+.lang button{
+  font-family:var(--label);font-size:12px;font-weight:600;letter-spacing:.1em;
+  background:none;border:none;color:var(--faint);cursor:pointer;padding:.2rem 0;
+  position:relative;line-height:1;
+}
+.lang button.active{color:var(--ink)}
+.lang button.active::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--gold)}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero{padding-block:clamp(1.4rem,5vw,3rem) clamp(2rem,6vw,3.4rem)}
+h1{
+  font-family:var(--display);font-weight:400;font-optical-sizing:auto;
+  font-size:clamp(2.15rem,8vw,5.6rem);line-height:.98;
+  letter-spacing:-.02em;margin-bottom:1.4rem;max-width:16ch;overflow-wrap:break-word;
+}
+.lede{font-size:clamp(1.04rem,1.7vw,1.22rem);color:var(--ink);max-width:50ch;line-height:1.6}
+.rule{height:0;border:none;width:46px;border-top:2px solid var(--gold);margin:clamp(1.8rem,4vw,2.6rem) 0}
+.callout{
+  font-weight:600;font-size:clamp(1.02rem,1.6vw,1.16rem);
+  color:var(--ink);max-width:50ch;line-height:1.5;
+}
+
+/* ============================================================
+   Sección del tablero
+   ============================================================ */
+.board-section{padding-block:clamp(1rem,3vw,1.6rem) clamp(2.5rem,7vw,4.5rem)}
+.section-h{
+  font-family:var(--display);font-weight:400;font-optical-sizing:auto;
+  font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.02;
+  letter-spacing:-.015em;margin-bottom:.5rem;
+}
+
+/* meta: semana + cobertura, como sumario editorial */
+.meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem .9rem;margin-bottom:1.8rem}
+.meta .week{font-family:var(--display);font-size:clamp(1.1rem,2.2vw,1.35rem);color:var(--grey);font-style:italic}
+.meta .cover{
+  font-family:var(--label);font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint);
+}
+.meta .cover::before{content:"·";margin-right:.7rem;color:var(--line)}
+
+/* avisos */
+.banner{
+  font-family:var(--label);font-size:12.5px;color:var(--grey);
+  border-left:2px solid var(--gold);padding:.4rem 0 .4rem .9rem;margin-bottom:1.6rem;
+}
+.confirm{
+  display:flex;align-items:center;flex-wrap:wrap;gap:.6rem 1.1rem;
+  background:var(--gold-wash);border-left:2px solid var(--gold);
+  padding:1rem 1.2rem;margin-bottom:1.8rem;
+}
+.confirm .ctxt{font-size:.96rem;color:var(--ink);flex:1 1 17rem;line-height:1.5}
+.confirm .addcal{
+  font-family:var(--label);font-size:12.5px;font-weight:600;letter-spacing:.04em;
+  background:var(--ink);color:var(--paper);border:none;
+  padding:.55rem 1rem;cursor:pointer;flex-shrink:0;
+}
+.confirm .addcal:hover{background:#000}
+.confirm .cclose{
+  font-family:var(--label);font-size:12px;color:var(--grey);
+  background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px;
+}
+
+/* ============================================================
+   Selector de día — nav editorial (sin pills)
+   ============================================================ */
+.tabs{
+  display:flex;flex-wrap:wrap;gap:0 clamp(.9rem,2.5vw,1.7rem);
+  border-bottom:1px solid var(--line);margin-bottom:1.5rem;
+}
+.tab{
+  position:relative;background:none;border:none;cursor:pointer;
+  display:flex;align-items:baseline;gap:.42rem;
+  padding:.55rem 0 .75rem;color:var(--faint);
+  font-family:var(--label);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+}
+.tab .tnum{font-family:var(--display);font-size:1.15rem;letter-spacing:-.01em;color:inherit;text-transform:none}
+.tab .tcov{font-size:9.5px;font-weight:600;letter-spacing:.02em;color:var(--faint);opacity:.8}
+.tab:hover{color:var(--grey)}
+.tab.active{color:var(--ink)}
+.tab.active .tcov{color:var(--gold)}
+.tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--gold)}
+.tab.today .tnum::after{content:"";display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--gold);margin-left:.3rem;vertical-align:middle}
+
+/* ============================================================
+   Zona horaria — minimal, subrayado serif
+   ============================================================ */
+.tzrow{display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem .8rem;margin-bottom:2.2rem}
+.tzrow label{
+  font-family:var(--label);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);
+}
+.tzrow select{
+  font-family:var(--display);font-size:1.02rem;color:var(--ink);
+  background:none;border:none;border-bottom:1px solid var(--ink);border-radius:0;
+  padding:.1rem 1.4rem .2rem .1rem;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232a2218' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .25rem center;
+}
+.tzrow select:focus{outline:none;border-bottom-color:var(--gold)}
+.tzrow .tznote{font-family:var(--label);font-size:11px;color:var(--faint);flex:1 1 15rem;line-height:1.5;min-width:0}
+
+/* ============================================================
+   La vigilia — línea continua de turnos
+   ============================================================ */
+.timeline{position:relative;list-style:none}
+/* la cadena: una sola línea vertical detrás de todos los nodos */
+.timeline::before{
+  content:"";position:absolute;left:6px;top:1.6rem;bottom:1.6rem;width:1px;
+  background:linear-gradient(var(--line),var(--line));
+}
+.slot{
+  position:relative;display:grid;
+  grid-template-columns:1fr auto;align-items:center;gap:.25rem 1.4rem;
+  padding:1.2rem 0 1.2rem 2.3rem;
+}
+.slot + .slot{border-top:1px solid var(--line-soft)}
+
+/* nodo sobre la línea */
+.node{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:13px;height:13px;border-radius:50%;
+  background:var(--paper);border:1.5px solid var(--faint);box-sizing:border-box;
+}
+.slot.has .node{background:var(--grey);border-color:var(--grey)}
+.slot.now .node{
+  background:var(--gold);border-color:var(--gold);
+  box-shadow:0 0 0 5px var(--gold-wash),0 0 14px 1px rgba(200,144,31,.55);
+  animation:beat 2.6s ease-in-out infinite;
+}
+@keyframes beat{
+  0%,100%{box-shadow:0 0 0 5px var(--gold-wash),0 0 0 0 rgba(200,144,31,.5)}
+  50%{box-shadow:0 0 0 5px var(--gold-wash),0 0 14px 3px rgba(200,144,31,.55)}
+}
+
+/* columna principal: hora + gente */
+.slot-main{min-width:0}
+.now-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:var(--label);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.25rem;
+}
+.now-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:beat 2.6s ease-in-out infinite}
+.slot-time{
+  font-family:var(--display);font-size:clamp(1.5rem,3.5vw,1.95rem);line-height:1.05;
+  letter-spacing:-.015em;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;
+}
+.slot.empty .slot-time{color:var(--grey)}
+.slot.now .slot-time{color:#8a5e0c}
+.slot-local{
+  font-family:var(--label);font-size:11px;color:var(--faint);margin-top:.2rem;
+  display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;
+}
+.slot-local .lt{letter-spacing:.1em;text-transform:uppercase}
+.slot-local .lh{font-family:var(--display);font-size:.95rem;color:var(--grey)}
+.slot-people{margin-top:.5rem;font-size:.95rem;color:var(--ink);line-height:1.5}
+.slot-people .empty{color:var(--faint);font-style:italic}
+.slot-people .cnt{
+  font-family:var(--label);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-left:.55rem;
+}
+
+/* columna de acciones */
+.slot-side{display:flex;align-items:center;gap:1.1rem;justify-self:end}
+.join{
+  font-family:var(--label);font-size:13px;font-weight:600;letter-spacing:.02em;
+  background:none;border:none;color:var(--ink);cursor:pointer;padding:.1rem 0;
+  display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;
+}
+.join .arw{transition:transform .15s ease;color:var(--gold)}
+.join:hover{color:var(--gold)}
+.join:hover .arw{transform:translateX(3px)}
+.slot.empty .join{color:var(--gold)}
+.leave{
+  font-family:var(--label);font-size:11.5px;color:var(--faint);
+  background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px;white-space:nowrap;
+}
+.leave:hover{color:var(--ink)}
+
+/* formularios inline — inputs subrayados, sin cajas */
+.form{
+  grid-column:1 / -1;display:none;flex-wrap:wrap;align-items:flex-end;gap:1rem 1.4rem;
+  margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--line);
+}
+.form.open{display:flex;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.form .row{display:flex;flex-direction:column;gap:.3rem;flex:1 1 12rem;min-width:0}
+.form label{font-family:var(--label);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--grey)}
+.form input{
+  font-family:var(--body);font-size:.96rem;color:var(--ink);
+  background:none;border:none;border-bottom:1px solid var(--faint);border-radius:0;
+  padding:.35rem 0;width:100%;
+}
+.form input::placeholder{color:var(--faint);opacity:.7}
+.form input:focus{outline:none;border-bottom-color:var(--gold)}
+.form button[type=submit]{
+  font-family:var(--label);font-size:12.5px;font-weight:600;letter-spacing:.04em;
+  background:var(--ink);color:var(--paper);border:none;padding:.55rem 1.1rem;cursor:pointer;white-space:nowrap;
+}
+.form button[type=submit]:hover{background:#000}
+.form button[type=submit]:disabled{opacity:.5;cursor:default}
+.form .cancel{
+  font-family:var(--label);font-size:11.5px;color:var(--grey);
+  background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px;
+}
+
+.note{font-family:var(--label);font-size:11px;color:var(--faint);margin-top:2.4rem;line-height:1.7;max-width:62ch}
+.state{font-family:var(--label);font-size:13px;font-weight:500;color:var(--grey);padding:3rem 0;text-align:center}
+
+/* móvil: la fila se apila */
+@media (max-width:560px){
+  .slot{grid-template-columns:1fr;gap:.1rem}
+  .slot-side{justify-self:start;margin-top:.7rem}
+}
+
+/* ============================================================
+   Pie de página
+   ============================================================ */
+.site-footer{background:var(--footer);border-top:1px solid var(--line);margin-top:1rem}
+.foot-grid{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:2.2rem;
+  padding-block:clamp(2.6rem,6vw,3.8rem) 1.8rem;
+}
+@media (max-width:680px){.foot-grid{grid-template-columns:1fr 1fr}.foot-about{grid-column:1/-1}}
+@media (max-width:420px){.foot-grid{grid-template-columns:1fr;gap:1.6rem}}
+.foot-col h3{font-family:var(--display);font-weight:400;font-size:1.22rem;margin-bottom:1rem;letter-spacing:-.01em}
+.foot-about p{font-size:.92rem;color:var(--grey);max-width:32ch;line-height:1.55}
+.foot-links{display:flex;flex-direction:column;gap:.6rem}
+.foot-links a{
+  font-family:var(--label);font-size:.9rem;color:var(--grey);text-decoration:none;
+  width:max-content;border-bottom:1px solid transparent;padding-bottom:1px;
+}
+.foot-links a:hover{color:var(--ink);border-color:var(--gold)}
+.foot-social{display:flex;gap:.6rem}
+.foot-social a{
+  display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border:1px solid var(--line);border-radius:50%;color:var(--grey);
+  transition:color .12s ease,border-color .12s ease;
+}
+.foot-social a:hover{color:var(--ink);border-color:var(--gold)}
+.foot-social svg{width:18px;height:18px}
+.foot-bottom{padding-block:1.3rem 2rem;border-top:1px solid var(--line)}
+.foot-bottom span{font-family:var(--label);font-size:10.5px;letter-spacing:.05em;color:var(--faint)}
+
+/* ============================================================
+   Movimiento reducido
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .slot.now .node{box-shadow:0 0 0 5px var(--gold-wash)}
+}
